@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+    integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+  <link href="gantt.css" />
+  <meta http-equiv="X-UA-COmpatible" content="ie=edge" />
+  <!-- <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.3/dist/Chart.min.js"></script> -->
+
+  <title>Fetch txt : Job Shop</title>
+</head>
+
+<body>
+  <!-- Choix de la composition  -->
+
+  <label for="composition">Choissisez une composition : </label>
+  <select class="w3-select w3-border" id="composition" name="composition">
+    <option value="1">15 jobs 15 machines</option>
+    <option value="2">20 jobs 15 machines</option>
+    <option value="3">20 jobs 20 machines</option>
+    <option value="4">30 jobs 15 machines</option>
+    <option value="5">30 jobs 20 machines</option>
+    <option value="6">50 jobs 15 machines</option>
+    <option value="7">50 jobs 20 machines</option>
+    <option value="8">100 jobs 20 machines</option>
+  </select><br><br>
+
+  <!-- Choix de l'instance -->
+
+  <label for="composition">Choissisez une instance : </label>
+  <select class="w3-select w3-border" id="instance" name="instance">
+    <option value="1">1ère instance</option>
+    <option value="2">2ème instance</option>
+    <option value="3">3ème instance</option>
+    <option value="4">4ème instance</option>
+    <option value="5">5ème instance</option>
+    <option value="6">6ème instance</option>
+    <option value="7">7ème instance</option>
+    <option value="8">8ème instance</option>
+    <option value="9">9ème instance</option>
+    <option value="10">10ème instance</option>
+  </select><br><br>
+
+
+  <!-- Boutton test -->
+
+  <button class="w3-btn w3-teal" onclick="Cree_matrice_time()" id="bouton_matrice">Création de la matrice time
+    (lancement auto)</button>
+
+  <button class="w3-btn w3-teal" onclick="Cree_matrice_machine()" id="bouton_matrice">Création de la matrice machine
+    (lancement auto)</button>
+  <br>
+  <button class="w3-btn w3-teal" onclick="Cree_vecteur_ordo(1)" id="bouton_vecteur_ordo">Création de le vecteur
+    ordonnancement (job 1)</button>
+
+    <button class="w3-btn w3-teal" onclick="Cree_vecteur_time(1)" id="bouton_vecteur_time">Création de le vecteur time
+      (job 1)</button>
+
+    <button class="w3-btn w3-teal" onclick="Cree_debut_ope_min(1)" id="bouton_vecteur_time">Création de le vecteur debut
+        (job 1)</button>
+  <br>
+
+
+  <button class="w3-btn w3-teal" onclick="sortlabels(1)" id="bouton_vecteur_time">sortlabels()</button>
+
+  <button class="w3-btn w3-teal" onclick="Cree_vecteur_gantt()" id="bouton_vecteur_time">Cree vecteur gantt()</button>
+
+  <button class="w3-btn w3-teal" onclick="XZiter()" id="bouton_vecteur_time"> XZiter </button>
+
+  <!-- 
+    <button class="w3-btn w3-teal" onclick="console.log(vecteur_ordo)" id="bouton_affichage_ordo">Affichage du vecteur
+    d'ordonnancement</button>
+
+  <button class="w3-btn w3-teal" onclick="console.log(vecteur_time)" id="bouton_affichage_time">Affichage du vecteur des
+    temps</button>
+    -->
+
+
+
+
+  <br><br>
+  <button type="button" class="btn btn-info" onclick="chartIt()">Affichage du GANTT 😊</button>
+
+  <div class="graph_container">
+
+    <canvas id="myChart"></canvas>
+
+  </div>
+
+
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.3/Chart.min.js"></script>
+
+
+  <script>
+
+    let nb_jobs = 0;
+    let nb_machines = 0;
+    let tables;
+    let matrice_time = [];
+    let matrice_machine = [];
+    let vecteur_time = []; // depend de num_job
+    let vecteur_ordo = []; // depend de num_job
+    let vecteur_debut = [];
+    let xlabels = [];
+    let ylabels = [];
+    let zlabels = []; // durée
+    let vecteur_gantt = []; // A utiliser -> Xlabels et Zlabels
+    let Xlabels = [];
+    let Zlabels = [];
+    let debut_job_precedent = [];
+    let s = [];
+
+
+
+    function deter_compo() { // détermination de la composition, ex : 1 -> [15,15] afin d'utiliser ces paramètres dans les parcours de matrices
+      if (composition.value == 1) { nb_jobs = 15; nb_machines = 15; }
+      else if (composition.value == 2) { nb_jobs = 20; nb_machines = 15; }
+      else if (composition.value == 3) { nb_jobs = 20; nb_machines = 20; }
+      else if (composition.value == 4) { nb_jobs = 30; nb_machines = 15; }
+      else if (composition.value == 5) { nb_jobs = 30; nb_machines = 20; }
+      else if (composition.value == 6) { nb_jobs = 50; nb_machines = 15; }
+      else if (composition.value == 7) { nb_jobs = 50; nb_machines = 20; }
+      else if (composition.value == 8) { nb_jobs = 100; nb_machines = 20; }
+      //console.log(nb_jobs);
+      //console.log(nb_machines);
+    }
+
+    async function Cree_matrice_time() {
+      matrice_time = [];
+      deter_compo();
+
+      const response = await fetch(composition.value + '.txt'); // Lecture du fichier sélectionné
+      const data = await response.text();
+      const tabless = data.split('\n').slice(3 + (4 * (instance.value - 1)) + (2 * nb_jobs * (instance.value - 1))); // 3 = start des lignes de des nombres
+
+      let columns = tabless[1].split(' ').slice(1); // tabless 1 pour la ligne 2 pour debug les espaces / slice 1 pour sauté l'espace en début de ligne
+
+      // trouvons les éléments (de manière clean) avant de les mettres dans la matrice :)
+
+
+
+
+      for (let step = 0; step < nb_jobs; step++) { // création de la matrice_time
+
+        let le_skip = tabless[step].split(' ')[1];
+
+        if (le_skip == '') { // commencer le remplissage à partir de slice(2)
+
+          let step_s2 = 0;
+
+          while (tabless[step].split(' ').slice(2)[step_s2] != undefined) {
+
+            if (tabless[step].split(' ').slice(2)[step_s2] != '') { // ça esquive bien les ''
+
+              matrice_time.push(tabless[step].split(' ').slice(2)[step_s2]);
+
+            }
+
+            step_s2 += 1;
+
+          }
+        }
+        else { // remplissage à partir de slice(1)
+
+          let step_s1 = 0;
+
+          while (tabless[step].split(' ').slice(1)[step_s1] != undefined) { // le remplissage de la ligne step
+
+            if (tabless[step].split(' ').slice(1)[step_s1] != '') {
+
+              matrice_time.push(tabless[step].split(' ').slice(1)[step_s1]);
+
+            }
+
+            step_s1 += 1;
+
+          }
+        }
+      }
+
+
+
+      //console.log('la matrice : ' + matrice_time);
+
+    }
+
+    async function Cree_matrice_machine() {
+      matrice_machine = [];
+      deter_compo();
+
+      const response = await fetch(composition.value + '.txt'); // Lecture du fichier sélectionné
+      const data = await response.text();
+      const tabless = data.split('\n').slice((4 + nb_jobs) + ((instance.value - 1) * (4 + 2 * nb_jobs))); // 3 = start des lignes de des nombres
+      let columns = tabless[1].split(' ').slice(1); // tabless 1 pour la ligne 2 pour debug les espaces / slice 1 pour sauté l'espace en début de ligne
+      // trouvons les éléments (de manière clean) avant de les mettres dans la matrice :)
+
+      for (let step = 0; step < nb_jobs; step++) { // création de la matrice_machine
+
+        let le_skip = tabless[step].split(' ')[1];
+
+        if (le_skip == '') { // commencer le remplissage à partir de slice(2)
+
+          let step_s2 = 0;
+
+          while (tabless[step].split(' ').slice(2)[step_s2] != undefined) {
+
+            if (tabless[step].split(' ').slice(2)[step_s2] != '') { // ça esquive bien les ''
+
+              matrice_machine.push(tabless[step].split(' ').slice(2)[step_s2]);
+
+            }
+
+            step_s2 += 1;
+
+          }
+        }
+        else { // remplissage à partir de slice(1)
+
+          let step_s1 = 0;
+
+          while (tabless[step].split(' ').slice(1)[step_s1] != undefined) { // le remplissage de la ligne step
+
+            if (tabless[step].split(' ').slice(1)[step_s1] != '') {
+
+              matrice_machine.push(tabless[step].split(' ').slice(1)[step_s1]);
+
+            }
+
+            step_s1 += 1;
+
+          }
+        }
+      }
+
+
+
+      //console.log('la matrice : ' + matrice_machine);
+
+    }
+
+    function Cree_vecteur_ordo(num_job) { // initialise puis push dans vecteur_ordo l'ordonnancement des machines du job "num_job" <- paramètre d'entré
+
+      vecteur_ordo = [];
+
+      for (let step = 0; step < nb_machines; step++) { // parcours des lignes du job dans la matrice :)
+
+        vecteur_ordo.push(matrice_machine[((num_job - 1) * nb_machines) + step]);
+
+      }
+
+      //console.log('vecteur ord = ' + vecteur_ordo);
+
+      return vecteur_ordo;
+
+    }
+
+    function Cree_vecteur_time(num_job) { // initialise puis push dans vecteur_time le temps des machines du job "num_job" <- paramètre d'entré
+
+      vecteur_time = [];
+
+      for (let step = 0; step < nb_machines; step++) { // parcours des lignes du job dans la matrice :)
+
+        vecteur_time.push(matrice_time[((num_job - 1) * nb_machines) + step]);
+
+      }
+
+      //console.log(ordo);
+
+      return vecteur_time;
+
+    }
+
+    function Cree_debut_ope_min(i) { // min ~ ope(n+1) débute après opé(n)  // vecteur des débuts
+
+      let time_job_precedent = Cree_vecteur_time(i-1);
+      let s = 0;
+      vecteur_debut = [];
+
+      if (i == 1) {
+
+        for (let step = 0; step < nb_machines; step++) {
+          vecteur_debut.push(s);
+          s = (parseInt(s) + parseInt(vecteur_time[step]));
+        }
+        debut_job_precedent = vecteur_debut;
+      }
+      else {
+        let vecteur_debut_precedent = Cree_debut_ope_min(i-1);
+
+        // si i != 1 alors Cree_debut_ope_men(i-1) on aura alors vecteur_debut du précedent
+
+
+        for (let step = 0; step < nb_machines; step++) {
+
+          vecteur_debut.push(s);
+          //s = (parseInt(s) + parseInt(vecteur_time[step]));
+          
+          // la somme des débuts des jobs précédents + la somme des times des jobs précedents > la somme des débuts + des times du jobs de
+          // la machine précedemment utilisé pour le job en question
+
+          if (parseInt(debut_job_precedent[step]) + parseInt(time_job_precedent[step]) < parseInt(vecteur_debut[step]) + parseInt(vecteur_time[step])) {
+
+            s = (parseInt(s) + parseInt(vecteur_time[step]) - parseInt(vecteur_time[step - 1]));
+
+          }
+          else{
+
+            s = (parseInt(s) + parseInt(vecteur_time[step]));
+
+          }
+        }
+      }
+
+      return vecteur_debut;
+
+    }
+
+
+    async function sortlabels(num_job) {
+      let indicemax = 0;
+      let max = 0;
+      let intermediaire_x;
+      let intermediaire_z
+      xlabels = vecteur_debut;
+      ylabels = vecteur_ordo;
+      zlabels = vecteur_time;
+
+      for (let k = 0; k < xlabels.length; k++) {
+        max = 0;
+        for (let step = k; step < xlabels.length; step++) {
+
+          if (max < parseInt(ylabels[step])) {
+            max = ylabels[step];
+            intermediaire_x = xlabels[step];
+            intermediaire_z = zlabels[step];
+            indicemax = step;
+          }
+        }
+        ylabels[indicemax] = ylabels[k];
+        ylabels[k] = max;
+
+        xlabels[indicemax] = xlabels[k];
+        xlabels[k] = intermediaire_x;
+
+        zlabels[indicemax] = zlabels[k];
+        zlabels[k] = intermediaire_z;
+
+      }
+      return { xlabels, ylabels, zlabels }
+    }
+
+    function XZiter() {
+
+      for (let i = 1; i < nb_jobs + 1; i++) {
+
+        Cree_vecteur_time(i);
+
+        Cree_vecteur_ordo(i);
+
+        Cree_debut_ope_min(i);
+
+        sortlabels(i);
+
+        Cree_vecteur_gantt();
+
+      }
+    }
+
+
+
+    function Cree_vecteur_gantt() {
+
+
+      vecteur_gantt.push({
+        label: 'Début de l\' opération ', // Première cartouches --------------------------
+        data: xlabels, // le debut ~ MA FONCTION Cree_debut_ope_min(1)
+        backgroundColor: "rgba(63,103,126,0)",
+        hoverBackgroundColor: '"rgba(50,90,100,0)"'
+      },
+        {
+          label: 'Durée de l\'opération',
+          data: zlabels, // la durée ~ MON VECTEUR
+          backgroundColor: '#' + (Math.random() * 0xFFFFFF << 0).toString(16), // les couleurs
+        })
+
+      /*
+      vecteur_gantt = [{
+            label: 'Début de l\' opération ', // Première cartouches --------------------------
+            data: xlabels, // le debut ~ MA FONCTION Cree_debut_ope_min(1)
+            backgroundColor: "rgba(63,103,126,0)",
+            hoverBackgroundColor: '"rgba(50,90,100,0)"'
+          },
+          {
+            label: 'Durée de l\'opération',
+            data: zlabels, // la durée ~ MON VECTEUR
+            backgroundColor: 'purple', // les couleurs
+          },  // ------------------------------------------------------------------------------
+          {
+            label: 'Début de l\' opération ', // deuxieme cartouches --------------------------
+            data: xlabels, // le debut ~
+            backgroundColor: "rgba(63,103,126,0)",
+            hoverBackgroundColor: "rgba(50,90,100,0)"
+          },
+          {
+            label: 'Durée de l\'opération',
+            data: zlabels, // la durée ~
+            backgroundColor: 'red', // les couleurs
+          }   // ------------------------------------------------------------------------------
+          ];
+          */
+    }
+
+    Cree_matrice_time();
+    Cree_matrice_machine();
+    //Cree_vecteur_time(1); // ça marche pas, ptète à cause du paramètre ?
+    //Cree_vecteur_ordo(1); //idem
+    //console.log(vecteur_gantt);
+
+    async function chartIt() {
+      /////////------------------------------------------------------------------
+      var barOptions_stacked = {
+        hover: {
+          animationDuration: 10
+        },
+        scales: {
+          xAxes: [{ // axe X
+            label: "Temps",
+            ticks: {
+              beginAtZero: true,
+              fontFamily: "'Open Sans Bold', sans-serif",
+              fontSize: 11 // taille de la graduation en X
+            },
+            scaleLabel: {
+              display: true // false à la base
+            },
+            gridLines: {
+            },
+            stacked: true
+          }],
+          yAxes: [{ // axe Y
+            gridLines: {
+              display: false,
+              color: "#fff",
+              zeroLineColor: "#fff",
+              zeroLineWidth: 0
+            },
+            ticks: {
+              display: true,
+              fontFamily: "'Open Sans Bold', sans-serif",
+              fontSize: 11 // taille de la graduation en Y
+            },
+            stacked: true // true à la base -> + épais
+          }]
+        },
+        legend: { // une légende ?
+          display: false
+        },
+      };
+
+      var ctx = document.getElementById("myChart");
+
+      var myChart = new Chart(ctx, {
+        type: 'horizontalBar',
+        data: {
+          labels: vecteur_ordo,
+
+          datasets: vecteur_gantt
+        },
+        options: barOptions_stacked,
+      });
+
+      // this part to make the tooltip only active on your real dataset
+      var originalGetElementAtEvent = myChart.getElementAtEvent;
+      myChart.getElementAtEvent = function (e) {
+        return originalGetElementAtEvent.apply(this, arguments).filter(function (e) {
+          return e._datasetIndex === 1;
+        });
+      }
+    }
+
+  </script>
+
+  <!-- <p>D1 c'est : <span id="d1"></span><br /></p> -->
+</body>
+
+</html>
