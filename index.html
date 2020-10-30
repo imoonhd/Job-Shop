@@ -2,14 +2,22 @@
 <html>
 
 <head>
+  
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+  <style>chart-container {
+    width: 600px;
+    height: 400px;
+    position: relative;
+}</style>
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
     integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-  <link href="gantt.css" />
   <meta http-equiv="X-UA-COmpatible" content="ie=edge" />
-  <!-- <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.3/dist/Chart.min.js"></script> -->
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0/dist/Chart.bundle.min.js"></script>
+
+  
 
   <title>Fetch txt : Job Shop</title>
 </head>
@@ -57,11 +65,21 @@
   <button class="w3-btn w3-teal" onclick="Cree_vecteur_ordo(1)" id="bouton_vecteur_ordo">Création de le vecteur
     ordonnancement (job 1)</button>
 
-    <button class="w3-btn w3-teal" onclick="Cree_vecteur_time(1)" id="bouton_vecteur_time">Création de le vecteur time
-      (job 1)</button>
+  <button class="w3-btn w3-teal" onclick="Cree_vecteur_time(1)" id="bouton_vecteur_time">Création de le vecteur time
+    (job 1)</button>
 
-    <button class="w3-btn w3-teal" onclick="Cree_debut_ope_min(1)" id="bouton_vecteur_time">Création de le vecteur debut
-        (job 1)</button>
+  <button class="w3-btn w3-teal" onclick="Cree_vecteur_debut(1)" id="bouton_vecteur_time">Création de le vecteur debut
+    (job 1)</button>
+
+
+  <br>  <button class="w3-btn w3-teal" onclick="Cree_vecteur_ordo(2)" id="bouton_vecteur_ordo">Création de le vecteur
+    ordonnancement (job 2)</button>
+
+  <button class="w3-btn w3-teal" onclick="Cree_vecteur_time(2)" id="bouton_vecteur_time">Création de le vecteur time
+    (job 2)</button>
+
+  <button class="w3-btn w3-teal" onclick="Cree_vecteur_debut(2)" id="bouton_vecteur_time">Création de le vecteur debut
+    (job 2)</button>
   <br>
 
 
@@ -85,15 +103,13 @@
   <br><br>
   <button type="button" class="btn btn-info" onclick="chartIt()">Affichage du GANTT 😊</button>
 
-  <div class="graph_container">
-
-    <canvas id="myChart"></canvas>
-
+  <div class="chart-container">
+    <canvas id="chart"></canvas>
   </div>
 
 
   <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.3/Chart.min.js"></script>
-
+  <script src="https://cdn.jsdelivr.net/gh/anton-shchyrov/chartjs-plugin-gantt/dist/chartjs-plugin-gantt.min.js"></script>
 
   <script>
 
@@ -112,8 +128,8 @@
     let Xlabels = [];
     let Zlabels = [];
     let debut_job_precedent = [];
-    let s = [];
-
+    let s = 0;
+    let vecteur_to = [];
 
 
     function deter_compo() { // détermination de la composition, ex : 1 -> [15,15] afin d'utiliser ces paramètres dans les parcours de matrices
@@ -248,7 +264,7 @@
 
       for (let step = 0; step < nb_machines; step++) { // parcours des lignes du job dans la matrice :)
 
-        vecteur_ordo.push(matrice_machine[((num_job - 1) * nb_machines) + step]);
+        vecteur_ordo.push(parseInt(matrice_machine[((num_job - 1) * nb_machines) + step]));
 
       }
 
@@ -264,7 +280,7 @@
 
       for (let step = 0; step < nb_machines; step++) { // parcours des lignes du job dans la matrice :)
 
-        vecteur_time.push(matrice_time[((num_job - 1) * nb_machines) + step]);
+        vecteur_time.push(parseInt(matrice_time[((num_job - 1) * nb_machines) + step]));
 
       }
 
@@ -274,26 +290,26 @@
 
     }
 
-    function Cree_debut_ope_min(i) { // min ~ ope(n+1) débute après opé(n)  // vecteur des débuts
+    function Cree_vecteur_debut(num_job) { // min ~ ope(n+1) débute après opé(n)  // vecteur des débuts // le i c'est num_job
 
-      let time_job_precedent = Cree_vecteur_time(i-1);
-      let s = 0;
+      // let time_job_precedent = Cree_vecteur_time(i-1);
+      //let s = 0;
       vecteur_debut = [];
 
-      if (i == 1) {
+      //if (i == 1) {
 
-        for (let step = 0; step < nb_machines; step++) {
-          vecteur_debut.push(s);
-          s = (parseInt(s) + parseInt(vecteur_time[step]));
-        }
-        debut_job_precedent = vecteur_debut;
+      for (let step = 0; step < nb_machines; step++) {
+        vecteur_debut.push(parseInt(s));
+        s = (parseInt(s) + parseInt(vecteur_time[step]));
       }
+      ///console.log('le vecteur = ' + vecteur_debut)
+      //debut_job_precedent = vecteur_debut;
+      //}
+
+      /*
       else {
         let vecteur_debut_precedent = Cree_debut_ope_min(i-1);
-
-        // si i != 1 alors Cree_debut_ope_men(i-1) on aura alors vecteur_debut du précedent
-
-
+        console.log('le vecteur precedent debut = ' + parseInt(vecteur_debut_precedent))
         for (let step = 0; step < nb_machines; step++) {
 
           vecteur_debut.push(s);
@@ -314,6 +330,8 @@
           }
         }
       }
+      */
+
 
       return vecteur_debut;
 
@@ -361,7 +379,7 @@
 
         Cree_vecteur_ordo(i);
 
-        Cree_debut_ope_min(i);
+        Cree_vecteur_debut(i);
 
         sortlabels(i);
 
@@ -373,9 +391,18 @@
 
 
     function Cree_vecteur_gantt() {
-
-
-      vecteur_gantt.push({
+      let couleur_random = (Math.random() * 0xFFFFFF << 0).toString(16);
+      vecteur_to = [];
+      for (let step = 0; step < xlabels.length; step++) {
+        vecteur_to.push(parseInt(xlabels[step]) + parseInt(zlabels[step]));
+      }
+      // LA C BON -> vecteur_gantt.push({ x: {from: xlabels[0], to: vecteur_to[0]}, y: ylabels[0], backgroundColor: '#' + (Math.random() * 0xFFFFFF << 0).toString(16)})
+      for (let k = 0; k < xlabels.length; k++) {
+        vecteur_gantt.push({ x: {from: xlabels[k], to: vecteur_to[k]}, y: ylabels[k], backgroundColor: '#' + couleur_random})
+      }
+      /*
+      
+        vecteur_gantt.push({
         label: 'Début de l\' opération ', // Première cartouches --------------------------
         data: xlabels, // le debut ~ MA FONCTION Cree_debut_ope_min(1)
         backgroundColor: "rgba(63,103,126,0)",
@@ -386,6 +413,8 @@
           data: zlabels, // la durée ~ MON VECTEUR
           backgroundColor: '#' + (Math.random() * 0xFFFFFF << 0).toString(16), // les couleurs
         })
+        
+        */
 
       /*
       vecteur_gantt = [{
@@ -422,64 +451,19 @@
 
     async function chartIt() {
       /////////------------------------------------------------------------------
-      var barOptions_stacked = {
-        hover: {
-          animationDuration: 10
-        },
-        scales: {
-          xAxes: [{ // axe X
-            label: "Temps",
-            ticks: {
-              beginAtZero: true,
-              fontFamily: "'Open Sans Bold', sans-serif",
-              fontSize: 11 // taille de la graduation en X
-            },
-            scaleLabel: {
-              display: true // false à la base
-            },
-            gridLines: {
-            },
-            stacked: true
-          }],
-          yAxes: [{ // axe Y
-            gridLines: {
-              display: false,
-              color: "#fff",
-              zeroLineColor: "#fff",
-              zeroLineWidth: 0
-            },
-            ticks: {
-              display: true,
-              fontFamily: "'Open Sans Bold', sans-serif",
-              fontSize: 11 // taille de la graduation en Y
-            },
-            stacked: true // true à la base -> + épais
-          }]
-        },
-        legend: { // une légende ?
-          display: false
-        },
-      };
 
-      var ctx = document.getElementById("myChart");
 
-      var myChart = new Chart(ctx, {
-        type: 'horizontalBar',
+      const chart = new Chart("chart", {
+        type: 'gantt',
         data: {
-          labels: vecteur_ordo,
-
-          datasets: vecteur_gantt
+          datasets: [{
+            height: 1,  // default 5
+            width: 1,  // default 5
+            label: "Size sample",
+            data: vecteur_gantt
+        }]
         },
-        options: barOptions_stacked,
       });
-
-      // this part to make the tooltip only active on your real dataset
-      var originalGetElementAtEvent = myChart.getElementAtEvent;
-      myChart.getElementAtEvent = function (e) {
-        return originalGetElementAtEvent.apply(this, arguments).filter(function (e) {
-          return e._datasetIndex === 1;
-        });
-      }
     }
 
   </script>
