@@ -89,17 +89,6 @@
 
   <button class="w3-btn w3-teal" onclick="XZiter()" id="bouton_vecteur_time"> XZiter </button>
 
-  <!-- 
-    <button class="w3-btn w3-teal" onclick="console.log(vecteur_ordo)" id="bouton_affichage_ordo">Affichage du vecteur
-    d'ordonnancement</button>
-
-  <button class="w3-btn w3-teal" onclick="console.log(vecteur_time)" id="bouton_affichage_time">Affichage du vecteur des
-    temps</button>
-    -->
-
-
-
-
   <br><br>
   <button type="button" class="btn btn-info" onclick="chartIt()">Affichage du GANTT 😊</button>
 
@@ -141,7 +130,7 @@
       else if (composition.value == 6) { nb_jobs = 50; nb_machines = 15; }
       else if (composition.value == 7) { nb_jobs = 50; nb_machines = 20; }
       else if (composition.value == 8) { nb_jobs = 100; nb_machines = 20; }
-      //console.log(nb_jobs);
+      //console.log(nb_jobs); -------- debbug
       //console.log(nb_machines);
     }
 
@@ -156,9 +145,6 @@
       let columns = tabless[1].split(' ').slice(1); // tabless 1 pour la ligne 2 pour debug les espaces / slice 1 pour sauté l'espace en début de ligne
 
       // trouvons les éléments (de manière clean) avant de les mettres dans la matrice :)
-
-
-
 
       for (let step = 0; step < nb_jobs; step++) { // création de la matrice_time
 
@@ -197,10 +183,6 @@
           }
         }
       }
-
-
-
-      //console.log('la matrice : ' + matrice_time);
 
     }
 
@@ -252,10 +234,6 @@
         }
       }
 
-
-
-      //console.log('la matrice : ' + matrice_machine);
-
     }
 
     function Cree_vecteur_ordo(num_job) { // initialise puis push dans vecteur_ordo l'ordonnancement des machines du job "num_job" <- paramètre d'entré
@@ -291,9 +269,6 @@
     }
 
     function Cree_vecteur_debut(num_job) { // min ~ ope(n+1) débute après opé(n)  // vecteur des débuts // le i c'est num_job
-
-      // let time_job_precedent = Cree_vecteur_time(i-1);
-      //let s = 0;
       vecteur_debut = [];
 
       //if (i == 1) {
@@ -302,36 +277,6 @@
         vecteur_debut.push(parseInt(s));
         s = (parseInt(s) + parseInt(vecteur_time[step]));
       }
-      ///console.log('le vecteur = ' + vecteur_debut)
-      //debut_job_precedent = vecteur_debut;
-      //}
-
-      /*
-      else {
-        let vecteur_debut_precedent = Cree_debut_ope_min(i-1);
-        console.log('le vecteur precedent debut = ' + parseInt(vecteur_debut_precedent))
-        for (let step = 0; step < nb_machines; step++) {
-
-          vecteur_debut.push(s);
-          //s = (parseInt(s) + parseInt(vecteur_time[step]));
-          
-          // la somme des débuts des jobs précédents + la somme des times des jobs précedents > la somme des débuts + des times du jobs de
-          // la machine précedemment utilisé pour le job en question
-
-          if (parseInt(debut_job_precedent[step]) + parseInt(time_job_precedent[step]) < parseInt(vecteur_debut[step]) + parseInt(vecteur_time[step])) {
-
-            s = (parseInt(s) + parseInt(vecteur_time[step]) - parseInt(vecteur_time[step - 1]));
-
-          }
-          else{
-
-            s = (parseInt(s) + parseInt(vecteur_time[step]));
-
-          }
-        }
-      }
-      */
-
 
       return vecteur_debut;
 
@@ -393,61 +338,19 @@
     function Cree_vecteur_gantt() {
       let couleur_random = (Math.random() * 0xFFFFFF << 0).toString(16);
       vecteur_to = [];
+
       for (let step = 0; step < xlabels.length; step++) {
+
         vecteur_to.push(parseInt(xlabels[step]) + parseInt(zlabels[step]));
+
       }
       // LA C BON -> vecteur_gantt.push({ x: {from: xlabels[0], to: vecteur_to[0]}, y: ylabels[0], backgroundColor: '#' + (Math.random() * 0xFFFFFF << 0).toString(16)})
       for (let k = 0; k < xlabels.length; k++) {
+
         vecteur_gantt.push({ x: {from: xlabels[k], to: vecteur_to[k]}, y: ylabels[k], backgroundColor: '#' + couleur_random})
+
       }
-      /*
-      
-        vecteur_gantt.push({
-        label: 'Début de l\' opération ', // Première cartouches --------------------------
-        data: xlabels, // le debut ~ MA FONCTION Cree_debut_ope_min(1)
-        backgroundColor: "rgba(63,103,126,0)",
-        hoverBackgroundColor: '"rgba(50,90,100,0)"'
-      },
-        {
-          label: 'Durée de l\'opération',
-          data: zlabels, // la durée ~ MON VECTEUR
-          backgroundColor: '#' + (Math.random() * 0xFFFFFF << 0).toString(16), // les couleurs
-        })
-        
-        */
-
-      /*
-      vecteur_gantt = [{
-            label: 'Début de l\' opération ', // Première cartouches --------------------------
-            data: xlabels, // le debut ~ MA FONCTION Cree_debut_ope_min(1)
-            backgroundColor: "rgba(63,103,126,0)",
-            hoverBackgroundColor: '"rgba(50,90,100,0)"'
-          },
-          {
-            label: 'Durée de l\'opération',
-            data: zlabels, // la durée ~ MON VECTEUR
-            backgroundColor: 'purple', // les couleurs
-          },  // ------------------------------------------------------------------------------
-          {
-            label: 'Début de l\' opération ', // deuxieme cartouches --------------------------
-            data: xlabels, // le debut ~
-            backgroundColor: "rgba(63,103,126,0)",
-            hoverBackgroundColor: "rgba(50,90,100,0)"
-          },
-          {
-            label: 'Durée de l\'opération',
-            data: zlabels, // la durée ~
-            backgroundColor: 'red', // les couleurs
-          }   // ------------------------------------------------------------------------------
-          ];
-          */
     }
-
-    Cree_matrice_time();
-    Cree_matrice_machine();
-    //Cree_vecteur_time(1); // ça marche pas, ptète à cause du paramètre ?
-    //Cree_vecteur_ordo(1); //idem
-    //console.log(vecteur_gantt);
 
     async function chartIt() {
       /////////------------------------------------------------------------------
@@ -466,9 +369,11 @@
       });
     }
 
+    Cree_matrice_time();
+    Cree_matrice_machine();
+
   </script>
 
-  <!-- <p>D1 c'est : <span id="d1"></span><br /></p> -->
 </body>
 
 </html>
