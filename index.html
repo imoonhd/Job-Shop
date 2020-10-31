@@ -2,22 +2,24 @@
 <html>
 
 <head>
-  
+
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
-  <style>chart-container {
-    width: 600px;
-    height: 400px;
-    position: relative;
-}</style>
+  <style>
+    chart-container {
+      width: 600px;
+      height: 400px;
+      position: relative;
+    }
+  </style>
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
     integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
   <meta http-equiv="X-UA-COmpatible" content="ie=edge" />
 
   <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0/dist/Chart.bundle.min.js"></script>
 
-  
+
 
   <title>Fetch txt : Job Shop</title>
 </head>
@@ -72,7 +74,7 @@
     (job 1)</button>
 
 
-  <br>  <button class="w3-btn w3-teal" onclick="Cree_vecteur_ordo(2)" id="bouton_vecteur_ordo">Création de le vecteur
+  <br> <button class="w3-btn w3-teal" onclick="Cree_vecteur_ordo(2)" id="bouton_vecteur_ordo">Création de le vecteur
     ordonnancement (job 2)</button>
 
   <button class="w3-btn w3-teal" onclick="Cree_vecteur_time(2)" id="bouton_vecteur_time">Création de le vecteur time
@@ -98,7 +100,8 @@
 
 
   <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.3/Chart.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/gh/anton-shchyrov/chartjs-plugin-gantt/dist/chartjs-plugin-gantt.min.js"></script>
+  <script
+    src="https://cdn.jsdelivr.net/gh/anton-shchyrov/chartjs-plugin-gantt/dist/chartjs-plugin-gantt.min.js"></script>
 
   <script>
 
@@ -130,7 +133,7 @@
       else if (composition.value == 6) { nb_jobs = 50; nb_machines = 15; }
       else if (composition.value == 7) { nb_jobs = 50; nb_machines = 20; }
       else if (composition.value == 8) { nb_jobs = 100; nb_machines = 20; }
-      //console.log(nb_jobs); -------- debbug
+      //console.log(nb_jobs);
       //console.log(nb_machines);
     }
 
@@ -145,6 +148,9 @@
       let columns = tabless[1].split(' ').slice(1); // tabless 1 pour la ligne 2 pour debug les espaces / slice 1 pour sauté l'espace en début de ligne
 
       // trouvons les éléments (de manière clean) avant de les mettres dans la matrice :)
+
+
+
 
       for (let step = 0; step < nb_jobs; step++) { // création de la matrice_time
 
@@ -183,6 +189,10 @@
           }
         }
       }
+
+
+
+      //console.log('la matrice : ' + matrice_time);
 
     }
 
@@ -234,6 +244,10 @@
         }
       }
 
+
+
+      //console.log('la matrice : ' + matrice_machine);
+
     }
 
     function Cree_vecteur_ordo(num_job) { // initialise puis push dans vecteur_ordo l'ordonnancement des machines du job "num_job" <- paramètre d'entré
@@ -269,19 +283,20 @@
     }
 
     function Cree_vecteur_debut(num_job) { // min ~ ope(n+1) débute après opé(n)  // vecteur des débuts // le i c'est num_job
+      
       vecteur_debut = [];
 
-      //if (i == 1) {
+        for (let step = 0; step < nb_machines; step++) {
+          vecteur_debut.push(parseInt(s));
+          s = (parseInt(s) + parseInt(vecteur_time[step]));
+        }
 
-      for (let step = 0; step < nb_machines; step++) {
-        vecteur_debut.push(parseInt(s));
-        s = (parseInt(s) + parseInt(vecteur_time[step]));
-      }
+
+
 
       return vecteur_debut;
 
     }
-
 
     async function sortlabels(num_job) {
       let indicemax = 0;
@@ -317,7 +332,7 @@
     }
 
     function XZiter() {
-
+      s = 0;
       for (let i = 1; i < nb_jobs + 1; i++) {
 
         Cree_vecteur_time(i);
@@ -331,6 +346,7 @@
         Cree_vecteur_gantt();
 
       }
+      console.log("Le makespan : " + s);
     }
 
 
@@ -338,18 +354,14 @@
     function Cree_vecteur_gantt() {
       let couleur_random = (Math.random() * 0xFFFFFF << 0).toString(16);
       vecteur_to = [];
-
       for (let step = 0; step < xlabels.length; step++) {
-
         vecteur_to.push(parseInt(xlabels[step]) + parseInt(zlabels[step]));
-
       }
       // LA C BON -> vecteur_gantt.push({ x: {from: xlabels[0], to: vecteur_to[0]}, y: ylabels[0], backgroundColor: '#' + (Math.random() * 0xFFFFFF << 0).toString(16)})
       for (let k = 0; k < xlabels.length; k++) {
-
-        vecteur_gantt.push({ x: {from: xlabels[k], to: vecteur_to[k]}, y: ylabels[k], backgroundColor: '#' + couleur_random})
-
+        vecteur_gantt.push({ x: { from: xlabels[k], to: vecteur_to[k] }, y: ylabels[k], backgroundColor: '#' + couleur_random })
       }
+
     }
 
     async function chartIt() {
@@ -364,16 +376,17 @@
             width: 1,  // default 5
             label: "Size sample",
             data: vecteur_gantt
-        }]
+          }]
         },
       });
     }
-
+    
     Cree_matrice_time();
     Cree_matrice_machine();
 
   </script>
 
+  <!-- <p>D1 c'est : <span id="d1"></span><br /></p> -->
 </body>
 
 </html>
