@@ -59,8 +59,10 @@
   <!-- Boutton test -->
 
   <button class="btn btn-dark" onclick="Cree_matrice_machine() + Cree_matrice_time()" id="bouton_ultime"> Initialisation des données </button>
-  <br>
-  <button class="btn btn-dark" onclick="ultime()" id="bouton_ultime"> Traitement & Affichage </button>
+  <br><br>
+  <button class="btn btn-dark" onclick="ultime()" id="bouton_ultime"> Heuristique : Traitements & Affichage </button>
+
+  <button class="btn btn-dark" onclick="ultime()" id="bouton_ultime"> Métaheuristique : Traitements & Affichage </button>
 
   <div class="chart-container">
     <canvas id="chart"></canvas>
@@ -545,7 +547,7 @@
       gBestParticle = swarm[0][0]
       gBestParticleCmax = makespan(gBestParticle)
 
-      for (let k = 0; k < length.swarm; k++) {
+      for (let k = 0; k < length.swarm; k++) { // redéfinition du swarm & des gBest(normal et Cmax)
 
         swarm[k * 5 + 1] = swarm[k * 5]; //particle["pBestParticle"] = particle["position"]
         swarm[k * 5 + 4] = makespan(swarm[k * 5 + 1]); //particle["pBestParticleCmax"] = makespan(particle["pBestParticle"])
@@ -562,12 +564,12 @@
 
       let iteration = 0;
 
-      while (iteration < 20) {
+      while (iteration < 20) {  // Màj pour chaque particule : de la vitesse, de la position et des autres paramètres
 
         iteration++;
         console.log('\nItération n° : ' + iteration)
 
-        for (let i in swarm.length) {
+        for (let i in swarm.length) { // ici on voit le "pour chaque particule"
 
           swarm[i * 5] = newParticle(swarm[i * 5]); // particle["position"] = newParticle(particle["position"], particle["pBestParticle"], gBestParticle)
           pCmax = makespan(swarm[i * 5]) // pCmax = makespan(particle["position"])
