@@ -58,41 +58,9 @@
 
   <!-- Boutton test -->
 
-  <button class="w3-btn w3-teal" onclick="Cree_matrice_time()" id="bouton_matrice">Création de la matrice time
-    (lancement auto)</button>
-
-  <button class="w3-btn w3-teal" onclick="Cree_matrice_machine()" id="bouton_matrice">Création de la matrice machine
-    (lancement auto)</button>
+  <button class="btn btn-dark" onclick="Cree_matrice_machine() + Cree_matrice_time()" id="bouton_ultime"> Initialisation des données </button>
   <br>
-  <button class="w3-btn w3-teal" onclick="Cree_vecteur_ordo(1)" id="bouton_vecteur_ordo">Création de le vecteur
-    ordonnancement (job 1)</button>
-
-  <button class="w3-btn w3-teal" onclick="Cree_vecteur_time(1)" id="bouton_vecteur_time">Création de le vecteur time
-    (job 1)</button>
-
-  <button class="w3-btn w3-teal" onclick="Cree_vecteur_debut(1)" id="bouton_vecteur_time">Création de le vecteur debut
-    (job 1)</button>
-
-
-  <br> <button class="w3-btn w3-teal" onclick="Cree_vecteur_ordo(2)" id="bouton_vecteur_ordo">Création de le vecteur
-    ordonnancement (job 2)</button>
-
-  <button class="w3-btn w3-teal" onclick="Cree_vecteur_time(2)" id="bouton_vecteur_time">Création de le vecteur time
-    (job 2)</button>
-
-  <button class="w3-btn w3-teal" onclick="Cree_vecteur_debut(2)" id="bouton_vecteur_time">Création de le vecteur debut
-    (job 2)</button>
-  <br>
-
-
-  <button class="w3-btn w3-teal" onclick="sortlabels(1)" id="bouton_vecteur_time">sortlabels()</button>
-
-  <button class="w3-btn w3-teal" onclick="Cree_vecteur_gantt()" id="bouton_vecteur_time">Cree vecteur gantt()</button>
-
-  <button class="w3-btn w3-teal" onclick="XZiter()" id="bouton_vecteur_time"> XZiter </button>
-
-  <br><br>
-  <button type="button" class="btn btn-info" onclick="chartIt()">Affichage du GANTT 😊</button>
+  <button class="btn btn-dark" onclick="ultime()" id="bouton_ultime"> Traitement & Affichage </button>
 
   <div class="chart-container">
     <canvas id="chart"></canvas>
@@ -283,15 +251,56 @@
     }
 
     function Cree_vecteur_debut(num_job) { // min ~ ope(n+1) débute après opé(n)  // vecteur des débuts // le i c'est num_job
-      
+
+      // let time_job_precedent = Cree_vecteur_time(i-1);
+      //let s = 0;
       vecteur_debut = [];
 
+      //if (num_job == 1) {
+
+      for (let step = 0; step < nb_machines; step++) {
+        vecteur_debut.push(parseInt(s));
+        s = (parseInt(s) + parseInt(vecteur_time[step]));
+      }
+      //}
+      /*
+      else{
+        Cree_vecteur_debut(num_job - 1)
+        
         for (let step = 0; step < nb_machines; step++) {
+          s = parseInt(vecteur_debut[(num_job-1)*nb_machines + step]) + parseInt(vecteur_time[(num_job-1)*nb_machines + step])
           vecteur_debut.push(parseInt(s));
-          s = (parseInt(s) + parseInt(vecteur_time[step]));
         }
+      }*/
+      ///console.log('le vecteur = ' + vecteur_debut)
+      //debut_job_precedent = vecteur_debut;
+      //}
 
+      /*
+      else {
+        let vecteur_debut_precedent = Cree_debut_ope_min(i-1);
+        console.log('le vecteur precedent debut = ' + parseInt(vecteur_debut_precedent))
+        for (let step = 0; step < nb_machines; step++) {
 
+          vecteur_debut.push(s);
+          //s = (parseInt(s) + parseInt(vecteur_time[step]));
+          
+          // la somme des débuts des jobs précédents + la somme des times des jobs précedents > la somme des débuts + des times du jobs de
+          // la machine précedemment utilisé pour le job en question
+
+          if (parseInt(debut_job_precedent[step]) + parseInt(time_job_precedent[step]) < parseInt(vecteur_debut[step]) + parseInt(vecteur_time[step])) {
+
+            s = (parseInt(s) + parseInt(vecteur_time[step]) - parseInt(vecteur_time[step - 1]));
+
+          }
+          else{
+
+            s = (parseInt(s) + parseInt(vecteur_time[step]));
+
+          }
+        }
+      }
+      */
 
 
       return vecteur_debut;
@@ -361,8 +370,54 @@
       for (let k = 0; k < xlabels.length; k++) {
         vecteur_gantt.push({ x: { from: xlabels[k], to: vecteur_to[k] }, y: ylabels[k], backgroundColor: '#' + couleur_random })
       }
+      /*
+      
+        vecteur_gantt.push({
+        label: 'Début de l\' opération ', // Première cartouches --------------------------
+        data: xlabels, // le debut ~ MA FONCTION Cree_debut_ope_min(1)
+        backgroundColor: "rgba(63,103,126,0)",
+        hoverBackgroundColor: '"rgba(50,90,100,0)"'
+      },
+        {
+          label: 'Durée de l\'opération',
+          data: zlabels, // la durée ~ MON VECTEUR
+          backgroundColor: '#' + (Math.random() * 0xFFFFFF << 0).toString(16), // les couleurs
+        })
+        
+        */
 
+      /*
+      vecteur_gantt = [{
+            label: 'Début de l\' opération ', // Première cartouches --------------------------
+            data: xlabels, // le debut ~ MA FONCTION Cree_debut_ope_min(1)
+            backgroundColor: "rgba(63,103,126,0)",
+            hoverBackgroundColor: '"rgba(50,90,100,0)"'
+          },
+          {
+            label: 'Durée de l\'opération',
+            data: zlabels, // la durée ~ MON VECTEUR
+            backgroundColor: 'purple', // les couleurs
+          },  // ------------------------------------------------------------------------------
+          {
+            label: 'Début de l\' opération ', // deuxieme cartouches --------------------------
+            data: xlabels, // le debut ~
+            backgroundColor: "rgba(63,103,126,0)",
+            hoverBackgroundColor: "rgba(50,90,100,0)"
+          },
+          {
+            label: 'Durée de l\'opération',
+            data: zlabels, // la durée ~
+            backgroundColor: 'red', // les couleurs
+          }   // ------------------------------------------------------------------------------
+          ];
+          */
     }
+
+    Cree_matrice_time();
+    Cree_matrice_machine();
+    //Cree_vecteur_time(1); // ça marche pas, ptète à cause du paramètre ?
+    //Cree_vecteur_ordo(1); //idem
+    //console.log(vecteur_gantt);
 
     async function chartIt() {
       /////////------------------------------------------------------------------
@@ -380,9 +435,211 @@
         },
       });
     }
-    
-    Cree_matrice_time();
-    Cree_matrice_machine();
+
+
+    // LES FONCTIONS DE L'AUTRE MONDE - PSOOOOOOOO
+
+    let matrixSol = []
+    let operation = []
+    let machines = [
+      [1, 2, 3],
+      [2, 3, 1],
+      [3, 1, 2]]
+    let times = [
+      [3, 9, 2],
+      [4, 3, 2],
+      [9, 3, 4]
+    ]
+
+    function vectorSolToMatrixSol(vectorSol) {
+      nb_jobs = 3;
+      nb_machines = 3;
+      matrixSol = [];  //[[] for i in range(len(machines))]
+      for (let k = 0; k < nb_machines; k++) {
+        operation.push(1);
+      }
+      for (let k = 0; k < nb_jobs; k++) {
+        //for job in vectorSol:
+        //job = int(job)
+        matrixSol[machines[nb_jobs - 1][operation[nb_jobs - 1] - 1] - 1].push(nb_jobs, operation[nb_jobs - 1])
+        operation[nb_jobs - 1] += 1
+        return (matrixSol)
+      }
+    }
+
+    function random_permutation(array) { // Bon
+      for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+      }
+      return array;
+    }
+
+    function newParticle(particle, pBestParticle, gBestParticle) {
+      var i, nbJobs, newPosition, u, wb, wc, wg;
+      newPosition = [];
+      for (var j = 0, _pj_a = particle.length; (j < _pj_a); j += 1) {
+        i = 0;
+        nbJobs = vecteur_time.length;
+        wc = Math.floor(Math.random() * 11);
+        wb = Math.floor(Math.random() * (11 - wc));
+        [wc, wb, wg] = [0.2, 0.3, 0.5]; // fixation des paramètres d'inertie
+        u = Math.random();
+        if ((u <= wc)) {
+          newPosition.push(newPosition, firstNotSchedule(newPosition, particle));
+        } else {
+          if ((u <= (wb + wg))) {
+            newPosition.push(newPosition, firstNotSchedule(newPosition, pBestParticle));
+          } else {
+            if (((wc + wb) < u)) {
+              newPosition.push(newPosition, firstNotSchedule(newPosition, gBestParticle));
+            }
+          }
+        }
+      }
+      return newPosition;
+    }
+
+    function makespan(vectorSolution) {
+      var gantt, lastRelease, makespan;
+      gantt = createGantt(vectorSolToMatrixSol(vectorSolution));
+      makespan = Math.max(gantt[0].slice((- 1))[0]);
+      for (var lastOp, _pj_c = 0, _pj_a = gantt, _pj_b = _pj_a.length; (_pj_c < _pj_b); _pj_c += 1) {
+        lastOp = _pj_a[_pj_c];
+        lastRelease = Math.max(lastOp.slice((- 1))[0]);
+        if ((lastRelease > makespan)) {
+          makespan = lastRelease;
+        }
+      }
+      return makespan;
+    }
+
+    function createSol(nbJobs, nbMachines) { // pas net: sol = sol,j + sol,j +... de longueur nb_jobs * nb_machines * 2 
+      var sol;
+      sol = [];
+      for (var i = 0; i < nb_machines; i++) {
+        for (var j = 1; j < nb_jobs + 1; j++) {
+          sol.push(sol, j);
+        }
+      }
+      return sol;
+    }
+
+    function JobShopPSO() {
+
+      let swarm = [];
+      let pCmax;
+
+      for (let k = 0; k < 39; k++) { // swarm = mes particules, condition k < "nb de particule souhaité"
+        swarm.push([random_permutation([1, 1, 1, 2, 2, 2, 3, 3, 3]), [], [], [], []])
+        // composition du swarm (modulo 5)
+        // swarm[0] = position, 
+        // swarm[1] = pBestParticle, 
+        // swarm[2] = cMaxBestParticle, 
+        // swarm[3] = velocity
+        // swarm[4] = pBestParticleCmax
+      }
+
+      console.log(swarm)
+
+      gBestParticle = swarm[0][0]
+      gBestParticleCmax = makespan(gBestParticle)
+
+      for (let k = 0; k < length.swarm; k++) {
+
+        swarm[k * 5 + 1] = swarm[k * 5]; //particle["pBestParticle"] = particle["position"]
+        swarm[k * 5 + 4] = makespan(swarm[k * 5 + 1]); //particle["pBestParticleCmax"] = makespan(particle["pBestParticle"])
+        swarm[k * 5 + 3] = 0; //particle["velocity"] = 0
+
+        if (swarm[k * 5 + 4] < gBestParticleCmax) { // if (particle["pBestParticleCmax"] < gBestParticleCmax)
+
+          gBestParticle = swarm[k * 5]; // gBestParticle = particle["position"]
+          gBestParticleCmax = swarm[k * 5 + 4]; // gBestParticleCmax = particle["pBestParticleCmax"]
+
+        }
+
+      }
+
+      let iteration = 0;
+
+      while (iteration < 20) {
+
+        iteration++;
+        console.log('\nItération n° : ' + iteration)
+
+        for (let i in swarm.length) {
+
+          swarm[i * 5] = newParticle(swarm[i * 5]); // particle["position"] = newParticle(particle["position"], particle["pBestParticle"], gBestParticle)
+          pCmax = makespan(swarm[i * 5]) // pCmax = makespan(particle["position"])
+
+          if (pCmax < swarm[i * 5 + 4]) {
+            swarm[i * 5 + 1] = swarm[i * 5];
+            swarm[i * 5 + 4] = pCmax;
+            if (pCmax < gBestParticleCmax) {
+              gBestParticle = swarm[i * 5];
+              gBestParticleCmax = pCmax;
+            }
+          }
+
+          console.log('Particule n° : ' + i + ', pCmax = ' + pCmax)
+        }
+      }
+      return ((gBestParticle, gBestParticleCmax))
+    }
+
+    function createGantt(solution) {
+      let gantt = solution;
+      let toPlaceList = [];
+      let endTimeList = [];
+      for (let k = 0; k < nb_jobs; k++) {
+        toPlaceList.push(1);
+        endTimeList.push(0);
+      }
+      let i = 0, j = 0;
+      while (i < nb_machines) {
+        while (j < nb_jobs) {
+          let refresh = false;
+
+          for (let job = 0; job < toPlaceList.lenght; job++) {
+            for (let toPlace = 0; toPlace < toPlaceList.lenght; toPlace++) {
+              if (solution[i][j][0] == job + 1 && solution[i][j][1] == toPlace) {
+                if (j == 0 || gantt[i][j - 1] != solution[i][j - 1]) {
+                  refresh = true
+                  if (j == 0) {
+                    previous = 0;
+                  }
+                  else {
+                    previous = gantt[i][j - 1][1]
+                  }
+                  let startTime = max(previous, endTimeList[job])
+                  let endTime = startTime + times[job][solution[i][j][1] - 1]
+                  gantt[i][j] = (startTime, endTime)
+                  toPlaceList[job]++;
+                  endTimeList[job] = endTime;
+                }
+              }
+            }
+            if (refresh == true) {
+              break
+            }
+
+          }
+          j++;
+        }
+        i += 1;
+        j = 0;
+        if (refresh == True) {
+          i = 0;
+        }
+      }
+      return (gantt)
+    }
+
+    function ultime(){
+      XZiter();
+      Cree_vecteur_gantt();
+      chartIt();
+    }
 
   </script>
 
